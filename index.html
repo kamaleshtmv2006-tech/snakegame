@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#171a21"/>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" sizes="64x64" href="assets/icons/icon-64.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <title>Friends-Inspired Snake</title>
+  <meta name="description" content="A cozy, sitcom-vibe Snake game with music, obstacles, and power-ups. PWA-ready." />
+  <style>
+    html, body { height: 100%; margin: 0; background:#171a21; color:#f6f7f9; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+    .container { max-width: 960px; margin: 0 auto; padding: 16px; }
+    header { display:flex; gap:12px; align-items:center; }
+    header img { width:48px; height:48px; }
+    h1 { font-size: clamp(20px, 4vw, 36px); margin: 0; letter-spacing: 1px; }
+    .topbar { display:flex; justify-content: space-between; align-items:center; margin-top:12px; gap:8px; flex-wrap:wrap; }
+    .card { background:#202532; border:1px solid #2a3142; border-radius:16px; padding:12px 16px; box-shadow: 0 10px 20px rgba(0,0,0,.25); }
+    #game-wrap { display:grid; grid-template-columns: 1fr 320px; gap:16px; }
+    canvas { background: linear-gradient(180deg,#0b0d12,#111827); border-radius:16px; border:1px solid #2a3142; width:100%; height:auto; aspect-ratio: 1 / 1; image-rendering: pixelated; }
+    #panel { display:flex; flex-direction:column; gap:12px; }
+    .row { display:flex; gap:8px; align-items:center; }
+    button, .btn { background:#2c3447; color:#f6f7f9; border:1px solid #3a435b; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; }
+    button:hover { background:#363f57; }
+    .pill { padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid #3a435b; }
+    .meter { height:8px; border-radius:8px; background:#111827; border:1px solid #2a3142; overflow:hidden; }
+    .meter>span { display:block; height:100%; width:0%; background:#22c55e; transition: width .15s linear; }
+    .controls { display:grid; grid-template-columns: repeat(3, 64px); gap:8px; justify-content:center; }
+    .controls button { padding:14px 0; }
+    footer { opacity:.7; font-size: 12px; margin-top: 8px; }
+    @media (max-width: 900px) { #game-wrap { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="assets/icons/icon-64.png" alt="Couch icon"/>
+      <h1>Friends‑Inspired Snake</h1>
+      <span class="pill">PWA</span>
+    </header>
+    <div class="topbar">
+      <div class="row card" style="gap:12px">
+        <span>Score: <strong id="score">0</strong></span>
+        <span>|</span>
+        <span>High: <strong id="high">0</strong></span>
+        <span>|</span>
+        <span>Speed: <strong id="speed">1x</strong></span>
+        <span class="pill" id="status">Ready</span>
+      </div>
+      <div class="row" style="gap:8px">
+        <button id="btn-start">Start</button>
+        <button id="btn-pause">Pause</button>
+        <button id="btn-reset">Reset</button>
+        <button id="btn-music" title="toggle music">♪</button>
+      </div>
+    </div>
+
+    <div id="game-wrap">
+      <canvas id="game" width="640" height="640"></canvas>
+      <aside id="panel">
+        <div class="card">
+          <h3 style="margin:0 0 8px">Power-ups</h3>
+          <ul style="margin:0; padding-left:18px; line-height:1.7">
+            <li><strong>☕ Coffee:</strong> temporary speed boost.</li>
+            <li><strong>🛡️ Shield:</strong> survive one crash.</li>
+            <li><strong>🍕 Pizza:</strong> bonus score and slow-mo.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 8px">How to play</h3>
+          <p style="margin:0">Use <strong>Arrow keys</strong> or <strong>WASD</strong>. On mobile, use the on-screen pad. Eat food (●), avoid obstacles (■), grab power-ups! Install to play offline.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 8px">Boost</h3>
+          <div class="meter"><span id="boostBar"></span></div>
+        </div>
+        <div class="card controls" id="mobileControls">
+          <button data-dir="up">↑</button>
+          <div style="display:flex; gap:8px; justify-content:center">
+            <button data-dir="left">←</button>
+            <button data-dir="down">↓</button>
+            <button data-dir="right">→</button>
+          </div>
+        </div>
+        <footer>Theme is a playful homage (no official assets).</footer>
+      </aside>
+    </div>
+  </div>
+
+  <audio id="bg" src="assets/audio/bg-music.wav" loop preload="auto"></audio>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+  </script>
+</body>
+</html>
